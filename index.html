@@ -116,6 +116,7 @@ h1 {
   line-height: 0.98;
   letter-spacing: 0;
 }
+.hero-title-line { display: inline; }
 .lead {
   max-width: 820px;
   margin-bottom: 30px;
@@ -371,6 +372,8 @@ figcaption p {
 @media (max-width: 560px) {
   .hero { min-height: 640px; }
   .hero-copy { width: calc(100% - 32px); padding-bottom: 34px; }
+  h1 { font-size: 48px; }
+  .hero-title-line { display: block; }
   .hero-meta { grid-template-columns: repeat(2, 1fr); }
   .section { padding: 58px 16px; }
   .brief { padding: 24px; }
@@ -397,7 +400,7 @@ figcaption p {
         <img class="hero-media" src="assets/hero-night-map.jpg" alt="西安核心城区夜间街区地图与酒吧样本分布" />
         <div class="hero-copy">
           <p class="kicker">数据新闻作品｜《新媒体数据分析与应用》</p>
-          <h1 id="hero-title">西安酒吧为什么集中在这些街区？</h1>
+          <h1 id="hero-title"><span class="hero-title-line">西安酒吧为什么</span><span class="hero-title-line">集中在这些</span><span class="hero-title-line">街区？</span></h1>
           <p class="lead">
             32 个公开地图 POI 显示，西安酒吧文化并不是平均铺开的“夜生活大全”，而是围绕老城巷弄、南门音乐街区和文旅节点形成的夜间社交网络。
           </p>
