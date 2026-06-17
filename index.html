@@ -6,7 +6,7 @@
     <title>夜西安：从酒吧 POI 看城市夜生活的空间</title>
     <meta
       name="description"
-      content="基于西安酒吧相关 POI 的单页展示网站，呈现西安夜生活、酒吧空间分布、街区文化与观察方向。"
+      content="基于西安酒吧相关 POI，呈现西安夜生活、酒吧空间分布、街区文化与城市夜间消费。"
     />
     <style>
 :root {
@@ -514,8 +514,8 @@ h2 {
               <p>游客白天看到的是城墙、钟楼和街巷肌理，夜晚留下来的往往是音乐、微醺、散步和朋友聚会。酒吧成为观察城市夜间活力的一扇窗口。</p>
             </article>
             <article class="prose-card">
-              <h3>这个网站想回答的问题</h3>
-              <p>西安酒吧主要集中在哪里？为什么这些地方更容易形成夜生活？POI 数据可以帮助我们看到“哪里集中”，街区空间和人的行为则解释“为什么集中”。</p>
+              <h3>核心问题</h3>
+              <p>西安酒吧主要集中在哪里？这些街区为什么更容易形成夜生活？从地点分布进入，才能继续看见街区空间、人流动线与夜间文化之间的关系。</p>
             </article>
           </div>
         </div>
@@ -528,13 +528,13 @@ h2 {
               <div class="section-kicker">02 数据来源</div>
               <h2>用公开 POI 看见空间，用文字补足原因。</h2>
             </div>
-            <p class="lead">这里的图表不是为了堆数量，而是用来支撑一条简单的观察线索：酒吧在哪里集中，这种集中和街区文化有什么关系。</p>
+            <p class="lead">POI 记录的是城市夜晚的落点：哪些地方聚集更多酒吧，哪些街区承载更多音乐、社交与文旅消费。</p>
           </div>
           <div class="data-grid">
-            <article class="card"><span class="no">A</span><h3>数据来源</h3><p>使用现有项目整理的公开地图 POI 样本，筛选西安市酒吧、清吧、精酿、夜店等相关地点。</p></article>
-            <article class="card"><span class="no">B</span><h3>分析对象</h3><p>观察对象是“酒吧相关地点”，重点不是消费评价，而是地点在城市中的位置与聚集关系。</p></article>
-            <article class="card"><span class="no">C</span><h3>观察维度</h3><p>主要从空间位置、街区分布、酒吧类型和文化功能四个维度组织展示。</p></article>
-            <article class="card"><span class="no">D</span><h3>数据边界</h3><p>POI 只能说明地点分布，不能完全代表真实体验，因此需要结合实地观察和后续采访继续完善。</p></article>
+            <article class="card"><span class="no">A</span><h3>数据来源</h3><p>样本来自公开地图 POI 整理，筛选西安市酒吧、清吧、精酿、夜店等相关地点。</p></article>
+            <article class="card"><span class="no">B</span><h3>分析对象</h3><p>关注“酒吧相关地点”在城市中的位置关系，而不是单一门店的消费评价。</p></article>
+            <article class="card"><span class="no">C</span><h3>观察维度</h3><p>空间位置、街区分布、酒吧类型和文化功能，共同构成夜生活的观察坐标。</p></article>
+            <article class="card"><span class="no">D</span><h3>解读边界</h3><p>POI 呈现地点网络，夜间体验仍需要从街区氛围、到访动机和真实消费场景中继续辨认。</p></article>
           </div>
         </div>
       </section>
@@ -550,8 +550,8 @@ h2 {
           </div>
           <div class="split">
             <div class="chart-copy">
-              <h3>图表要表达什么</h3>
-              <p>柱状图展示各观察区的 POI 数量差异，散点图用经纬度概略位置表现“聚集不是随机的”。两张图合在一起说明：夜生活节点不是单个店铺的孤立存在，而是街区环境共同作用的结果。</p>
+              <h3>从数量到空间</h3>
+              <p>柱状图呈现各观察区的 POI 数量差异，散点图描绘酒吧向核心街区靠拢的空间轮廓。数量与位置相互对应，夜生活节点由店铺密度、街区环境与人流共同形成。</p>
               <div class="callouts">
                 <div class="callout"><strong>老城更密集</strong>钟楼、德福巷附近街巷细密，步行停留和夜间消费更容易发生。</div>
                 <div class="callout"><strong>南门更有音乐属性</strong>城墙地标、演出空间和年轻人聚会需求，让南门成为夜间社交节点。</div>
@@ -560,17 +560,17 @@ h2 {
             </div>
             <div class="chart-card">
               <div id="chartZones" class="chart" role="img" aria-label="各街区酒吧 POI 数量柱状图"></div>
-              <p class="chart-note">结论：样本显示，酒吧 POI 主要集中在老城和南门周边，商圈与文旅节点形成补充。</p>
+              <p class="chart-note">酒吧 POI 主要集中在老城和南门周边，商圈与文旅节点形成补充。</p>
             </div>
           </div>
           <div class="split" style="margin-top: 18px;">
             <div class="chart-card">
               <div id="chartMap" class="chart" role="img" aria-label="酒吧 POI 概略空间散点图"></div>
-              <p class="chart-note">说明：散点为基于观察区中心生成的概略可视化，用于呈现聚集趋势，不等同于精确导航地图。</p>
+              <p class="chart-note">散点呈现概略聚集趋势，核心节点集中在城墙内外和南部文旅、商圈走廊。</p>
             </div>
             <div class="chart-card">
               <div id="chartType" class="chart" role="img" aria-label="酒吧相关类型占比图"></div>
-              <p class="chart-note">说明：类型分布帮助理解这些地点不只是“喝酒”，还包含音乐、精酿、餐酒和派对等不同消费场景。</p>
+              <p class="chart-note">类型差异连接不同消费场景：清吧、精酿、餐酒、音乐现场和派对空间共同构成夜生活层次。</p>
             </div>
           </div>
         </div>
@@ -616,7 +616,7 @@ h2 {
             </div>
             <div class="chart-card">
               <div id="chartCultureArea" class="chart" role="img" aria-label="街区与文化功能关系热力图"></div>
-              <p class="chart-note">结论：老城更综合，南门更偏音乐现场，文旅节点与商圈则分别承担游客体验和日常社交功能。</p>
+              <p class="chart-note">老城更综合，南门更偏音乐现场，文旅节点与商圈分别承担游客体验和日常社交功能。</p>
             </div>
           </div>
         </div>
@@ -627,15 +627,15 @@ h2 {
           <div class="section-header">
             <div>
               <div class="section-kicker">06 观察与采访</div>
-              <h2>数据之外：为什么人们会选择这里？</h2>
+              <h2>数据之外：人们为何在这些街区停留？</h2>
             </div>
-            <p class="lead">这一部分保留为后续田野观察和真实采访入口，用来补充 POI 数据看不到的动机、体验和街区关系。</p>
+            <p class="lead">选址、动线与夜间体验，是理解酒吧街区的关键。数据落点之外，还有人们停留、转场和选择的理由。</p>
           </div>
           <div class="interview-grid">
-            <article class="interview-card"><small>待补充采访</small><h3>店主选址</h3><p>店主为什么选择在南门、老城或商圈开店？租金、客流、演出资源和街区气质分别有多重要？</p></article>
-            <article class="interview-card"><small>观察方向</small><h3>顾客选择</h3><p>顾客为什么喜欢在这些街区聚会？他们更看重交通、朋友距离、音乐内容还是街区氛围？</p></article>
-            <article class="interview-card"><small>观察方向</small><h3>演出转场</h3><p>演出结束后，人流是否会进入附近酒吧？Livehouse 与周边消费空间之间是否存在连续动线？</p></article>
-            <article class="interview-card"><small>待补充采访</small><h3>本地与游客</h3><p>外地游客和本地年轻人的选择有什么不同？文旅打卡和日常社交是否对应不同类型的酒吧？</p></article>
+            <article class="interview-card"><small>访谈线索</small><h3>店主选址</h3><p>南门、老城与商圈的开店选择，往往与客流、租金、演出资源和街区气质相关。</p></article>
+            <article class="interview-card"><small>访谈线索</small><h3>顾客选择</h3><p>交通便利、朋友距离、音乐内容和街区氛围，影响年轻人夜晚聚会的目的地。</p></article>
+            <article class="interview-card"><small>观察切口</small><h3>演出转场</h3><p>Livehouse 散场后的步行路径，连接附近清吧、精酿空间和二次社交场景。</p></article>
+            <article class="interview-card"><small>观察切口</small><h3>本地与游客</h3><p>游客更接近文旅打卡路径，本地年轻人则更多依赖熟悉街区和稳定社交圈。</p></article>
           </div>
         </div>
       </section>
@@ -652,8 +652,8 @@ h2 {
           <div class="summary">
             <article class="summary-card"><strong>空间逻辑</strong><h3>酒吧分布反映城市夜生活的空间结构。</h3><p>老城、南门、商圈和文旅节点并列出现，说明夜生活不是孤立门店，而是被街区条件和客流共同塑造。</p></article>
             <article class="summary-card"><strong>文化逻辑</strong><h3>不同街区对应不同的夜间内容。</h3><p>老城强调巷弄与散步，南门强调音乐与聚会，商圈强调日常社交，文旅节点强调游客体验。</p></article>
-            <article class="summary-card"><strong>方法逻辑</strong><h3>数据负责定位，观察负责解释。</h3><p>仅有 POI 不足以说明全部体验，后续应通过实地观察、店主采访和顾客访谈补足真实语境。</p></article>
-            <article class="summary-card"><strong>传播逻辑</strong><h3>讲清楚一条城市故事线。</h3><p>从“西安夜晚在哪里热闹”进入，再解释“为什么这些街区能留住人”，更适合普通用户浏览和课堂展示。</p></article>
+            <article class="summary-card"><strong>理解路径</strong><h3>从位置走向理由。</h3><p>POI 呈现城市夜间节点，街区观察和访谈语境让这些节点拥有更具体的温度。</p></article>
+            <article class="summary-card"><strong>城市表达</strong><h3>热闹背后，是街区的吸引力。</h3><p>“哪里热闹”只是入口，“为什么能留住人”才是夜西安酒吧文化更耐看的部分。</p></article>
           </div>
         </div>
       </section>
@@ -662,7 +662,7 @@ h2 {
     <footer class="footer">
       <div class="footer-inner">
         <span>夜西安：酒吧 POI 与城市夜生活观察</span>
-        <span>静态网页展示，适合 GitHub Pages / Vercel / Netlify 部署</span>
+        <span>城市夜生活、酒吧 POI 与街区文化</span>
       </div>
     </footer>
 
