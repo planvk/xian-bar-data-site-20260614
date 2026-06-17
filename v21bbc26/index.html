@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>夜西安：从酒吧 POI 看城市夜生活的空间</title>
+    <meta
+      name="description"
+      content="基于西安酒吧相关 POI，呈现西安夜生活、酒吧空间分布、街区文化与城市夜间消费。"
+    />
+    <style>
+:root {
+  color-scheme: dark;
+  --bg: #05070d;
+  --bg-soft: #0a0d14;
+  --surface: rgba(16, 20, 31, 0.78);
+  --surface-strong: rgba(22, 27, 41, 0.9);
+  --text: #f6f7fb;
+  --muted: #a7adbd;
+  --soft: #747b8e;
+  --line: rgba(255, 255, 255, 0.12);
+  --blue: #59a7ff;
+  --gold: #f3bd59;
+  --wine: #b54662;
+  --green: #4fd3a0;
+  --radius: 8px;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--text);
+  background:
+    linear-gradient(180deg, rgba(5, 7, 13, 0.88), rgba(5, 7, 13, 0.98) 38%, #05070d 100%),
+    #05070d;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", Arial, sans-serif;
+  line-height: 1.72;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 58px;
+  padding: 0 clamp(18px, 4vw, 72px);
+  background: rgba(5, 7, 13, 0.76);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.brand::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 18px rgba(243, 189, 89, 0.8);
+}
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+nav a {
+  padding: 7px 10px;
+  color: rgba(246, 247, 251, 0.68);
+  font-size: 13px;
+  border-radius: 8px;
+}
+nav a:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.hero {
+  position: relative;
+  min-height: calc(100vh - 58px);
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(72px, 10vw, 120px) clamp(20px, 6vw, 96px) 74px;
+  background:
+    linear-gradient(90deg, rgba(5, 7, 13, 0.96), rgba(5, 7, 13, 0.68) 52%, rgba(5, 7, 13, 0.92)),
+    linear-gradient(180deg, rgba(5, 7, 13, 0.18), #05070d 100%),
+    url("assets/hero-night-map.jpg") center / cover no-repeat;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,0.94), transparent 86%);
+}
+.hero-inner {
+  position: relative;
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.eyebrow::before {
+  content: "";
+  width: 38px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+h1, h2, h3, p { margin: 0; }
+h1 {
+  max-width: 980px;
+  margin-top: 18px;
+  font-size: clamp(42px, 7vw, 88px);
+  line-height: 1.04;
+  letter-spacing: 0;
+  font-weight: 800;
+}
+.hero-subtitle {
+  max-width: 720px;
+  margin-top: 24px;
+  color: rgba(246, 247, 251, 0.78);
+  font-size: clamp(18px, 2.3vw, 26px);
+  line-height: 1.6;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 34px;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.16);
+  color: var(--text);
+  background: rgba(255,255,255,0.08);
+  font-size: 14px;
+  font-weight: 700;
+}
+.button.primary {
+  color: #071018;
+  background: linear-gradient(135deg, #f6cf7b, #59a7ff);
+  border-color: transparent;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 12px;
+  max-width: 820px;
+  margin-top: 54px;
+}
+.metric {
+  min-height: 94px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(6, 10, 17, 0.62);
+  backdrop-filter: blur(18px);
+}
+.metric strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1;
+}
+.metric span {
+  display: block;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.scroll-cue {
+  position: absolute;
+  left: clamp(20px, 6vw, 96px);
+  bottom: 24px;
+  color: rgba(246, 247, 251, 0.55);
+  font-size: 13px;
+}
+.scroll-cue::after {
+  content: "";
+  display: inline-block;
+  width: 34px;
+  height: 1px;
+  margin-left: 10px;
+  vertical-align: middle;
+  background: rgba(246, 247, 251, 0.32);
+}
+
+.section {
+  position: relative;
+  padding: clamp(76px, 9vw, 128px) clamp(20px, 5.5vw, 86px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.section.alt {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+    #070a12;
+}
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.section-header {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(280px, 0.62fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: end;
+  margin-bottom: clamp(30px, 5vw, 54px);
+}
+.section-kicker {
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+h2 {
+  margin-top: 10px;
+  font-size: clamp(30px, 4.3vw, 56px);
+  line-height: 1.14;
+  letter-spacing: 0;
+}
+.lead {
+  color: var(--muted);
+  font-size: 17px;
+}
+.prose {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 18px;
+}
+.prose-card, .card, .chart-card, .interview-card, .summary-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.prose-card {
+  padding: clamp(22px, 3vw, 32px);
+}
+.prose-card h3, .card h3, .chart-copy h3, .interview-card h3, .summary-card h3 {
+  font-size: 19px;
+  line-height: 1.35;
+}
+.prose-card p, .card p, .chart-copy p, .interview-card p, .summary-card p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 15px;
+}
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.card {
+  padding: 22px;
+}
+.card .no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  color: #061018;
+  background: var(--gold);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+.chart-copy {
+  padding: clamp(24px, 3vw, 34px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+}
+.callouts {
+  display: grid;
+  gap: 12px;
+  margin-top: 26px;
+}
+.callout {
+  padding: 16px;
+  border-left: 3px solid var(--blue);
+  border-radius: var(--radius);
+  color: var(--muted);
+  background: rgba(89, 167, 255, 0.08);
+}
+.callout strong {
+  display: block;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.chart-card {
+  padding: 18px;
+  min-height: 420px;
+}
+.chart {
+  width: 100%;
+  height: 380px;
+}
+.chart-note {
+  margin-top: 12px;
+  color: var(--soft);
+  font-size: 13px;
+}
+
+.district-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.district {
+  min-height: 260px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025)),
+    var(--surface);
+}
+.district .tag {
+  display: inline-flex;
+  min-width: 42px;
+  justify-content: center;
+  padding: 5px 9px;
+  border-radius: 8px;
+  color: #071018;
+  background: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+}
+.district h3 { margin-top: 42px; font-size: 22px; }
+.district p { margin-top: 12px; color: var(--muted); font-size: 15px; }
+.district:nth-child(2) .tag { background: var(--blue); }
+.district:nth-child(3) .tag { background: var(--gold); }
+.district:nth-child(4) .tag { color: var(--text); background: var(--wine); }
+
+.culture-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
+  gap: 18px;
+}
+.culture-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.culture-item {
+  padding: 18px;
+  min-height: 126px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.045);
+}
+.culture-item strong { display: block; font-size: 17px; }
+.culture-item span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.interview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.interview-card {
+  padding: 22px;
+  min-height: 220px;
+}
+.interview-card small {
+  display: inline-flex;
+  padding: 4px 8px;
+  color: var(--gold);
+  border: 1px solid rgba(243, 189, 89, 0.26);
+  border-radius: 8px;
+}
+.interview-card h3 { margin-top: 28px; }
+
+.summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.summary-card {
+  padding: 24px;
+}
+.summary-card strong {
+  display: block;
+  color: var(--green);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+}
+.footer {
+  padding: 34px clamp(20px, 5.5vw, 86px);
+  border-top: 1px solid var(--line);
+  color: var(--soft);
+  background: #05070d;
+  font-size: 13px;
+}
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+@media (max-width: 980px) {
+  .topbar { align-items: flex-start; flex-direction: column; padding-top: 14px; padding-bottom: 14px; }
+  nav { justify-content: flex-start; }
+  .hero { min-height: auto; padding-top: 80px; }
+  .metrics, .data-grid, .district-grid, .interview-grid { grid-template-columns: repeat(2, 1fr); }
+  .section-header, .prose, .split, .culture-layout, .summary { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  nav a { padding: 5px 8px; font-size: 12px; }
+  .hero-actions { align-items: stretch; flex-direction: column; }
+  .button { width: 100%; }
+  .metrics, .data-grid, .district-grid, .interview-grid, .culture-grid { grid-template-columns: 1fr; }
+  .metric { min-height: auto; }
+  .chart-card { min-height: 340px; }
+  .chart { height: 320px; }
+  .footer-inner { flex-direction: column; }
+}
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top">夜西安 POI 观察</a>
+      <nav aria-label="页面导航">
+        <a href="#background">研究背景</a>
+        <a href="#data">数据说明</a>
+        <a href="#space">空间分布</a>
+        <a href="#districts">街区解释</a>
+        <a href="#culture">酒吧文化</a>
+        <a href="#fieldwork">观察采访</a>
+        <a href="#summary">结论</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-inner">
+          <div class="eyebrow">Xi'an Nightlife Map</div>
+          <h1>夜西安：从酒吧 POI 看城市夜生活的空间</h1>
+          <p class="hero-subtitle">老城巷弄、南门音乐和文旅节点，共同塑造了西安的夜间社交地图。</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#background">开始浏览</a>
+            <a class="button" href="#space">查看空间分布</a>
+          </div>
+          <div class="metrics" aria-label="项目概览">
+            <div class="metric"><strong>32</strong><span>酒吧相关 POI 样本</span></div>
+            <div class="metric"><strong>5</strong><span>重点观察街区</span></div>
+            <div class="metric"><strong>4</strong><span>主要夜生活节点</span></div>
+            <div class="metric"><strong>1</strong><span>清晰的城市故事线</span></div>
+          </div>
+        </div>
+        <div class="scroll-cue">向下滚动</div>
+      </section>
+
+      <section class="section" id="background">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">01 研究背景</div>
+              <h2>为什么要从酒吧看西安夜生活？</h2>
+            </div>
+            <p class="lead">西安不只是历史古城。夜晚的酒吧、Livehouse、精酿空间和清吧，也在重塑年轻人的社交方式与城市消费节奏。</p>
+          </div>
+          <div class="prose">
+            <article class="prose-card">
+              <h3>从“历史地标”走向“夜间场景”</h3>
+              <p>游客白天看到的是城墙、钟楼和街巷肌理，夜晚留下来的往往是音乐、微醺、散步和朋友聚会。酒吧成为观察城市夜间活力的一扇窗口。</p>
+            </article>
+            <article class="prose-card">
+              <h3>核心问题</h3>
+              <p>西安酒吧主要集中在哪里？这些街区为什么更容易形成夜生活？从地点分布进入，才能继续看见街区空间、人流动线与夜间文化之间的关系。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="data">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">02 数据来源</div>
+              <h2>用公开 POI 看见空间，用文字补足原因。</h2>
+            </div>
+            <p class="lead">POI 记录的是城市夜晚的落点：哪些地方聚集更多酒吧，哪些街区承载更多音乐、社交与文旅消费。</p>
+          </div>
+          <div class="data-grid">
+            <article class="card"><span class="no">A</span><h3>数据来源</h3><p>样本来自公开地图 POI 整理，筛选西安市酒吧、清吧、精酿、夜店等相关地点。</p></article>
+            <article class="card"><span class="no">B</span><h3>分析对象</h3><p>关注“酒吧相关地点”在城市中的位置关系，而不是单一门店的消费评价。</p></article>
+            <article class="card"><span class="no">C</span><h3>观察维度</h3><p>空间位置、街区分布、酒吧类型和文化功能，共同构成夜生活的观察坐标。</p></article>
+            <article class="card"><span class="no">D</span><h3>解读边界</h3><p>POI 呈现地点网络，夜间体验仍需要从街区氛围、到访动机和真实消费场景中继续辨认。</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="space">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">03 空间分布</div>
+              <h2>西安酒吧并不是平均铺开，而是向少数街区靠拢。</h2>
+            </div>
+            <p class="lead">图表表达的是“集中度”：样本中，钟楼到德福巷、南门到九部坊一带最突出，说明夜生活和城市可步行空间、游客流量、演出场景高度相关。</p>
+          </div>
+          <div class="split">
+            <div class="chart-copy">
+              <h3>从数量到空间</h3>
+              <p>柱状图呈现各观察区的 POI 数量差异，散点图描绘酒吧向核心街区靠拢的空间轮廓。数量与位置相互对应，夜生活节点由店铺密度、街区环境与人流共同形成。</p>
+              <div class="callouts">
+                <div class="callout"><strong>老城更密集</strong>钟楼、德福巷附近街巷细密，步行停留和夜间消费更容易发生。</div>
+                <div class="callout"><strong>南门更有音乐属性</strong>城墙地标、演出空间和年轻人聚会需求，让南门成为夜间社交节点。</div>
+                <div class="callout"><strong>文旅节点提供客流</strong>曲江等区域带来游客打卡、夜游和短暂停留型消费。</div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div id="chartZones" class="chart" role="img" aria-label="各街区酒吧 POI 数量柱状图"></div>
+              <p class="chart-note">酒吧 POI 主要集中在老城和南门周边，商圈与文旅节点形成补充。</p>
+            </div>
+          </div>
+          <div class="split" style="margin-top: 18px;">
+            <div class="chart-card">
+              <div id="chartMap" class="chart" role="img" aria-label="酒吧 POI 概略空间散点图"></div>
+              <p class="chart-note">散点呈现概略聚集趋势，核心节点集中在城墙内外和南部文旅、商圈走廊。</p>
+            </div>
+            <div class="chart-card">
+              <div id="chartType" class="chart" role="img" aria-label="酒吧相关类型占比图"></div>
+              <p class="chart-note">类型差异连接不同消费场景：清吧、精酿、餐酒、音乐现场和派对空间共同构成夜生活层次。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="districts">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">04 街区解释</div>
+              <h2>为什么是老城、南门、商圈和文旅节点？</h2>
+            </div>
+            <p class="lead">数据只能指出集中位置，真正让夜生活成立的是街区的空间条件、人的流动和内容供给。</p>
+          </div>
+          <div class="district-grid">
+            <article class="district"><span class="tag">老城</span><h3>巷弄与停留</h3><p>历史街区保留了细密巷弄和适合步行的空间，游客与本地人混合，适合晚间散步、转场和小规模社交。</p></article>
+            <article class="district"><span class="tag">南门</span><h3>地标与音乐</h3><p>城墙地标提升识别度，Livehouse 与演出活动带来夜间人流，适合形成以音乐和聚会为核心的夜生活节点。</p></article>
+            <article class="district"><span class="tag">商圈</span><h3>聚会与消费</h3><p>小寨、高新等商圈承接朋友聚会、下班社交、清吧和精酿消费，强调便利性和稳定客流。</p></article>
+            <article class="district"><span class="tag">文旅</span><h3>打卡与夜游</h3><p>曲江等文旅节点连接游客打卡、夜游路线和短暂停留型消费，酒吧成为城市体验的一部分。</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="culture">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">05 酒吧文化</div>
+              <h2>酒吧不只是喝酒，也是音乐、社交和街区氛围。</h2>
+            </div>
+            <p class="lead">把酒吧看作城市夜间文化的一部分，才能解释为什么相似数量的店铺，在不同街区会呈现不同的气质。</p>
+          </div>
+          <div class="culture-layout">
+            <div class="culture-grid">
+              <div class="culture-item"><strong>精酿</strong><span>强调口味、交流和小圈层兴趣。</span></div>
+              <div class="culture-item"><strong>清吧</strong><span>适合聊天、约会和轻社交。</span></div>
+              <div class="culture-item"><strong>音乐 / Livehouse</strong><span>让演出和酒吧消费形成夜间动线。</span></div>
+              <div class="culture-item"><strong>派对 / Club</strong><span>对应更强的节奏感和年轻人聚会。</span></div>
+              <div class="culture-item"><strong>社交空间</strong><span>朋友见面、转场、聊天的中间地带。</span></div>
+              <div class="culture-item"><strong>文旅消费</strong><span>游客在夜游路线中寻找城市体验。</span></div>
+              <div class="culture-item"><strong>年轻人夜生活</strong><span>把音乐、微醺和城市漫游串在一起。</span></div>
+              <div class="culture-item"><strong>街区氛围</strong><span>店铺密度、灯光和人流共同制造夜感。</span></div>
+            </div>
+            <div class="chart-card">
+              <div id="chartCultureArea" class="chart" role="img" aria-label="街区与文化功能关系热力图"></div>
+              <p class="chart-note">老城更综合，南门更偏音乐现场，文旅节点与商圈分别承担游客体验和日常社交功能。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="fieldwork">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">06 观察与采访</div>
+              <h2>数据之外：人们为何在这些街区停留？</h2>
+            </div>
+            <p class="lead">选址、动线与夜间体验，是理解酒吧街区的关键。数据落点之外，还有人们停留、转场和选择的理由。</p>
+          </div>
+          <div class="interview-grid">
+            <article class="interview-card"><small>访谈线索</small><h3>店主选址</h3><p>南门、老城与商圈的开店选择，往往与客流、租金、演出资源和街区气质相关。</p></article>
+            <article class="interview-card"><small>访谈线索</small><h3>顾客选择</h3><p>交通便利、朋友距离、音乐内容和街区氛围，影响年轻人夜晚聚会的目的地。</p></article>
+            <article class="interview-card"><small>观察切口</small><h3>演出转场</h3><p>Livehouse 散场后的步行路径，连接附近清吧、精酿空间和二次社交场景。</p></article>
+            <article class="interview-card"><small>观察切口</small><h3>本地与游客</h3><p>游客更接近文旅打卡路径，本地年轻人则更多依赖熟悉街区和稳定社交圈。</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="summary">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">07 观察结论</div>
+              <h2>西安夜生活是一张由地点、内容和人流共同构成的网络。</h2>
+            </div>
+            <p class="lead">POI 数据帮助我们看到“哪里集中”，街区文化和人的行为解释“为什么集中”。</p>
+          </div>
+          <div class="summary">
+            <article class="summary-card"><strong>空间逻辑</strong><h3>酒吧分布反映城市夜生活的空间结构。</h3><p>老城、南门、商圈和文旅节点并列出现，说明夜生活不是孤立门店，而是被街区条件和客流共同塑造。</p></article>
+            <article class="summary-card"><strong>文化逻辑</strong><h3>不同街区对应不同的夜间内容。</h3><p>老城强调巷弄与散步，南门强调音乐与聚会，商圈强调日常社交，文旅节点强调游客体验。</p></article>
+            <article class="summary-card"><strong>理解路径</strong><h3>从位置走向理由。</h3><p>POI 呈现城市夜间节点，街区观察和访谈语境让这些节点拥有更具体的温度。</p></article>
+            <article class="summary-card"><strong>城市表达</strong><h3>热闹背后，是街区的吸引力。</h3><p>“哪里热闹”只是入口，“为什么能留住人”才是夜西安酒吧文化更耐看的部分。</p></article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span>夜西安：酒吧 POI 与城市夜生活观察</span>
+        <span>城市夜生活、酒吧 POI 与街区文化</span>
+      </div>
+    </footer>
+
+    <script src="assets/echarts.min.js"></script>
+    <script>
+const colors = {
+  text: "#f6f7fb",
+  muted: "#a7adbd",
+  line: "rgba(255,255,255,0.12)",
+  blue: "#59a7ff",
+  gold: "#f3bd59",
+  wine: "#b54662",
+  green: "#4fd3a0"
+};
+
+const zones = [
+  { name: "钟楼-德福巷", count: 15, center: [108.943, 34.257], role: "老城巷弄", culture: [5, 3, 4, 2, 1] },
+  { name: "南门-九部坊", count: 9, center: [108.945, 34.246], role: "音乐街区", culture: [2, 4, 1, 1, 1] },
+  { name: "曲江", count: 4, center: [108.984, 34.217], role: "文旅演艺", culture: [1, 1, 1, 0, 1] },
+  { name: "小寨", count: 3, center: [108.947, 34.229], role: "高校商圈", culture: [1, 0, 1, 1, 0] },
+  { name: "高新", count: 1, center: [108.888, 34.222], role: "商务社交", culture: [1, 0, 0, 0, 0] }
+];
+const cultureNames = ["清吧/鸡尾酒", "音乐现场", "精酿啤酒", "派对夜店", "餐酒馆"];
+const typeData = [
+  { name: "bar", value: 20 },
+  { name: "pub", value: 5 },
+  { name: "biergarten", value: 3 },
+  { name: "nightclub", value: 2 },
+  { name: "restaurant + bar", value: 2 }
+];
+const scatter = zones.flatMap((zone) =>
+  Array.from({ length: zone.count }, (_, i) => {
+    const angle = (i * 137.5 * Math.PI) / 180;
+    const radius = 0.0035 + (i % 5) * 0.0017;
+    return {
+      value: [
+        zone.center[0] + Math.cos(angle) * radius,
+        zone.center[1] + Math.sin(angle) * radius,
+        1
+      ],
+      zone: zone.name,
+      culture: cultureNames[i % cultureNames.length]
+    };
+  })
+);
+
+const charts = [];
+function init(id, option) {
+  const el = document.getElementById(id);
+  if (!el || !window.echarts) return;
+  const chart = echarts.init(el, null, { renderer: "canvas" });
+  chart.setOption({
+    color: [colors.blue, colors.gold, colors.green, colors.wine, "#8f7cff"],
+    textStyle: { color: colors.text, fontFamily: "-apple-system, BlinkMacSystemFont, 'Microsoft YaHei UI', Arial, sans-serif" },
+    tooltip: {
+      trigger: "item",
+      backgroundColor: "rgba(8, 10, 16, 0.94)",
+      borderColor: "rgba(255,255,255,0.14)",
+      textStyle: { color: colors.text }
+    },
+    grid: { left: 44, right: 24, top: 42, bottom: 42, containLabel: true },
+    ...option
+  });
+  charts.push(chart);
+}
+function axis() {
+  return {
+    axisLine: { lineStyle: { color: colors.line } },
+    axisTick: { show: false },
+    axisLabel: { color: colors.muted },
+    splitLine: { lineStyle: { color: "rgba(255,255,255,0.08)" } }
+  };
+}
+
+init("chartZones", {
+  xAxis: { type: "value", ...axis() },
+  yAxis: { type: "category", data: zones.map((z) => z.name), inverse: true, ...axis(), axisLabel: { color: colors.text, fontWeight: 700 } },
+  series: [{
+    type: "bar",
+    data: zones.map((z) => ({ value: z.count, itemStyle: { borderRadius: [0, 8, 8, 0] } })),
+    barWidth: 24,
+    label: { show: true, position: "right", color: colors.text, formatter: "{c} 个" }
+  }]
+});
+
+init("chartMap", {
+  grid: { left: 52, right: 28, top: 34, bottom: 48 },
+  xAxis: { name: "经度", type: "value", min: 108.875, max: 109.0, nameTextStyle: { color: colors.muted }, ...axis() },
+  yAxis: { name: "纬度", type: "value", min: 34.205, max: 34.27, nameTextStyle: { color: colors.muted }, ...axis() },
+  series: [
+    {
+      type: "scatter",
+      data: scatter,
+      symbolSize: 13,
+      itemStyle: { color: colors.blue, opacity: 0.74 },
+      emphasis: { itemStyle: { color: colors.gold, opacity: 1 } },
+      tooltip: { formatter: (p) => p.data.zone + "<br/>" + p.data.culture }
+    },
+    {
+      type: "effectScatter",
+      data: zones.map((z) => ({ name: z.name, value: [z.center[0], z.center[1], z.count] })),
+      symbolSize: (v) => 12 + v[2] * 1.3,
+      rippleEffect: { brushType: "stroke", scale: 3 },
+      itemStyle: { color: colors.gold },
+      label: { show: true, formatter: "{b}", position: "top", color: colors.text, fontWeight: 700 },
+      tooltip: { formatter: (p) => p.name + "<br/>样本：" + p.value[2] + " 个" }
+    }
+  ]
+});
+
+init("chartType", {
+  legend: { bottom: 0, textStyle: { color: colors.muted } },
+  series: [{
+    type: "pie",
+    radius: ["48%", "72%"],
+    center: ["50%", "44%"],
+    data: typeData,
+    avoidLabelOverlap: true,
+    itemStyle: { borderColor: "#10141f", borderWidth: 3 },
+    label: { color: colors.text, formatter: "{b}\\n{d}%" }
+  }]
+});
+
+const heatData = [];
+zones.forEach((zone, zi) => {
+  zone.culture.forEach((value, ci) => heatData.push([ci, zi, value]));
+});
+init("chartCultureArea", {
+  grid: { left: 90, right: 24, top: 34, bottom: 80 },
+  xAxis: { type: "category", data: cultureNames, axisLabel: { color: colors.muted, interval: 0, rotate: 24 }, axisTick: { show: false }, axisLine: { lineStyle: { color: colors.line } } },
+  yAxis: { type: "category", data: zones.map((z) => z.name), axisLabel: { color: colors.text, fontWeight: 700 }, axisTick: { show: false }, axisLine: { lineStyle: { color: colors.line } } },
+  visualMap: { min: 0, max: 5, orient: "horizontal", left: "center", bottom: 12, textStyle: { color: colors.muted }, inRange: { color: ["#141a25", "#234f6d", "#59a7ff", "#f3bd59"] } },
+  series: [{
+    type: "heatmap",
+    data: heatData,
+    label: { show: true, color: colors.text },
+    itemStyle: { borderColor: "rgba(255,255,255,0.12)", borderWidth: 1, borderRadius: 4 },
+    tooltip: { formatter: (p) => zones[p.data[1]].name + "<br/>" + cultureNames[p.data[0]] + "：" + p.data[2] }
+  }]
+});
+
+window.addEventListener("resize", () => charts.forEach((chart) => chart.resize()));
+    </script>
+  </body>
+</html>
